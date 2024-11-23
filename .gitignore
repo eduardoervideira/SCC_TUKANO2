@@ -1,3 +1,6 @@
 .idea/
 tukano.iml
 target/
+.DS_Store
+*.props
+.settings/
