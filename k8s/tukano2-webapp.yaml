@@ -15,7 +15,7 @@ spec:
       containers:
         - name: tukano-webapp
           image: jbrilha/scc2425-tukano2:latest
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           env:
             - name: POSTGRES_HOST
               value: "postgres-service"
