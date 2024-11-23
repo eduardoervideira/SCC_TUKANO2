@@ -23,10 +23,11 @@ import utils.IO;
 public class FilesystemStorage implements BlobStorage {
 	private final String rootDir;
 	private static final int CHUNK_SIZE = 4096;
-	private static final String DEFAULT_ROOT_DIR = "/tmp/";
+	private static final String DEFAULT_ROOT_DIR = "/app/blobs/";
 
 	public FilesystemStorage() {
-		this.rootDir = DEFAULT_ROOT_DIR;
+		//this.rootDir = DEFAULT_ROOT_DIR;
+        this.rootDir = System.getenv().getOrDefault("BLOB_STORAGE_PATH", DEFAULT_ROOT_DIR);
 	}
 	
 	@Override
