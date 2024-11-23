@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+mvn clean compile package
+docker build -t jbrilha/scc2425-tukano2:latest .
+
+kubectl delete all --all
+kubectl apply -f k8s/postgres.yaml
+kubectl apply -f k8s/tukano2-webapp.yaml
+kubectl rollout restart deployment
