@@ -19,6 +19,10 @@ spec:
           image: jbrilha/scc2425-tukano2:latest
           imagePullPolicy: Never
           env:
+            - name: REDIS_KEY
+              value: "joaoeddyREDIS"
+            - name: REDIS_URL
+              value: "redis-service"
             - name: SECRET
               value: "supersecret"
             - name: POSTGRES_HOST
