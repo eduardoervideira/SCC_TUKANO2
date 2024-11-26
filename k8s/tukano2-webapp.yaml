@@ -12,11 +12,19 @@ spec:
       labels:
         app: tukano-webapp
     spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
       containers:
         - name: tukano-webapp
           image: jbrilha/scc2425-tukano2:latest
           imagePullPolicy: Never
           env:
+            - name: REDIS_KEY
+              value: "joaoeddyREDIS"
+            - name: REDIS_URL
+              value: "redis-service"
+            - name: SECRET
+              value: "supersecret"
             - name: POSTGRES_HOST
               value: "postgres-service"
             - name: POSTGRES_PORT
@@ -27,17 +35,17 @@ spec:
               value: "joaoeddy"
             - name: POSTGRES_PASSWORD
               value: "joaoeddyCHANGELATER"
-          #   - name: BLOB_STORAGE_PATH
-          #     value: /app/blobs
+            - name: BLOB_STORAGE_PATH
+              value: /app/blobs/
           ports:
             - containerPort: 8080
-          # volumeMounts:
-          #   - name: blob-storage
-          #     mountPath: /app/blobs
-      # volumes:
-      #   - name: blob-storage
-      #     persistentVolumeClaim:
-      #       claimName: blob-storage-pvc
+          volumeMounts:
+            - name: blob-storage
+              mountPath: /app/blobs/
+      volumes:
+        - name: blob-storage
+          persistentVolumeClaim:
+            claimName: blob-storage-pvc
 ---
 apiVersion: v1
 kind: Service
