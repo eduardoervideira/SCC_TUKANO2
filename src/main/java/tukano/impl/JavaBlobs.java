@@ -2,6 +2,7 @@ package tukano.impl;
 
 import static java.lang.String.format;
 import static tukano.api.Result.ErrorCode.FORBIDDEN;
+import static tukano.api.Result.ErrorCode.UNAUTHORIZED;
 import static tukano.api.Result.error;
 
 import java.util.logging.Logger;
@@ -42,6 +43,8 @@ public class JavaBlobs implements Blobs {
 
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
+        if (!validCookieWithId(blobId))
+            return error(UNAUTHORIZED);
 
         return storage.write(toPath(blobId), bytes);
     }
@@ -53,6 +56,8 @@ public class JavaBlobs implements Blobs {
 
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
+        if (!validCookie())
+            return error(UNAUTHORIZED);
 
         return storage.read(toPath(blobId));
     }
@@ -62,6 +67,7 @@ public class JavaBlobs implements Blobs {
         Log.info(
             () -> format("delete : blobId = %s, token=%s\n", blobId, token));
 
+        // TODO admin only validation
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
 
@@ -82,6 +88,28 @@ public class JavaBlobs implements Blobs {
 
     private boolean validBlobId(String blobId, String token) {
         return Token.isValid(token, toURL(blobId));
+    }
+
+    private boolean validCookieWithId(String blobId) {
+        String userId = blobId.split("\\+")[0];
+
+        try {
+            Authentication.validateSession(userId);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validCookie() {
+        try {
+            Authentication.validateSession();
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     private String toPath(String blobId) { return blobId.replace("+", "/"); }

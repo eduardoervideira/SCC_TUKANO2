@@ -1,9 +1,11 @@
 package tukano.impl.cache;
 
+import java.util.Map;
 import java.util.function.Supplier;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import tukano.api.Result;
+import tukano.api.Session;
 import tukano.api.Result.ErrorCode;
 import utils.*;
 
@@ -16,6 +18,7 @@ public class RedisCache {
 
     private static final int SHORTS_EXPIRATION = 3600;
     private static final int USERS_EXPIRATION = 1800;
+    private static final int SESSION_EXPIRATION = 3600;
 
     private static JedisPool instance;
 
@@ -57,8 +60,10 @@ public class RedisCache {
             jedis.set(key, JSON.encode(obj));
             if (key.contains("short")) {
                 jedis.expire(key, SHORTS_EXPIRATION);
-            } else {
+            } else if (key.contains("user")) {
                 jedis.expire(key, USERS_EXPIRATION);
+            } else {
+                jedis.expire(key, SESSION_EXPIRATION);
             }
 
             return Result.ok(obj);
