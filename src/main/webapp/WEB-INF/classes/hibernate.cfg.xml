@@ -27,6 +27,7 @@
         <mapping class="tukano.api.Short" />
         <mapping class="tukano.impl.data.Following" />
         <mapping class="tukano.impl.data.Likes" />
+        <mapping class="tukano.impl.data.Stats" />
     </session-factory>
 </hibernate-configuration>
 
