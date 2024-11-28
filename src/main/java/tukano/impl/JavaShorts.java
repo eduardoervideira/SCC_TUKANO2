@@ -49,7 +49,7 @@ public class JavaShorts implements Shorts {
 			var blobUrl = format("%s/%s/%s", TukanoRestServer.serverURI, Blobs.NAME, shortId); 
 			var shrt = new Short(shortId, userId, blobUrl);
 
-			return errorOrValue(DB.insertOne(shrt), s -> s.copyWithLikes_And_Token(0));
+			return errorOrValue(DB.insertOne(shrt), s -> s.copyWithLikes_Views_And_Token(0, 0));
 		});
 	}
 
@@ -60,9 +60,14 @@ public class JavaShorts implements Shorts {
 		if( shortId == null )
 			return error(BAD_REQUEST);
 
-		var query = format("SELECT count(*) FROM Likes l WHERE l.shortId = '%s'", shortId);
-		var likes = DB.sql(query, Long.class);
-		return errorOrValue( getOne(shortId, Short.class), shrt -> shrt.copyWithLikes_And_Token( likes.get(0)));
+		var likesQuery = format("SELECT count(*) FROM Likes l WHERE l.shortId = '%s'", shortId);
+		var likes = DB.sql(likesQuery, Long.class);
+
+        var viewsQuery = format("SELECT views FROM Stats s WHERE s.shortId = '%s'", shortId);
+        var viewsRes = DB.sql(viewsQuery, Long.class);
+        var views = viewsRes.isEmpty() ? 0L : viewsRes.get(0);
+
+		return errorOrValue( getOne(shortId, Short.class), shrt -> shrt.copyWithLikes_Views_And_Token( likes.get(0), views));
 	}
 
 	
