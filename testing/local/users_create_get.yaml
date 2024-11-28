@@ -1,5 +1,5 @@
 config:
-  target: http://localhost:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint: {} # Used to get metrics for each endpoint individually.
   phases:
@@ -16,32 +16,32 @@ config:
     skipEmptyLines: true # not important in our case
     fields:
       - "userId"
-      - "pwd"
       - "email"
+      - "pwd"
       - "displayName"
 
 scenarios:
-- name: TuKanoRegister
-  flow:
-    - post:
-        url: /users/
-        headers:
+  - name: TuKanoRegister
+    flow:
+      - post:
+          url: /users/
+          headers:
             Content-Type: application/json
-        json:
-            id: "{{ userId }}" # this parameter is filled from the fields above
+          json:
+            userId: "{{ userId }}" # this parameter is filled from the fields above
             pwd: "{{ pwd }}"
             email: "{{ email }}"
             displayName: "{{ displayName }}"
-        capture:
-          - regexp: "(.+)"
-            as: "userId"
-    - log: "createUser: {{ userId }}"
+          capture:
+            - regexp: "(.+)"
+              as: "userId"
+      - log: "createUser: {{ userId }}"
 
-    - get:
-        url: /users/{{ userId }}
-        qs:
-          pwd: "{{ pwd }}"
-        capture:
-          - json: "$"
-            as: "gottenUser"
-    - log: "getUser: {{ gottenUser }}"
+      - get:
+          url: /users/{{ userId }}
+          qs:
+            pwd: "{{ pwd }}"
+          capture:
+            - json: "$"
+              as: "gottenUser"
+      - log: "getUser: {{ gottenUser }}"

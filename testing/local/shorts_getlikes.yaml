@@ -1,5 +1,5 @@
 config:
-  target: http://localhost:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint: {} # Used to get metrics for each endpoint individually.
   phases:
@@ -30,7 +30,7 @@ scenarios:
       - log: "createShort: {{ createdShort }}"
 
       - get:
-          url: /shorts/{{ createdShort.id }}/likes
+          url: /shorts/{{ createdShort.shortId }}/likes
           qs:
             pwd: "{{ pwd }}"
           capture:
@@ -39,7 +39,7 @@ scenarios:
       - log: "getLikes before: {{ likes }}"
 
       - post: # liking own short
-          url: /shorts/{{ createdShort.id }}/{{ userId}}/likes
+          url: /shorts/{{ createdShort.shortId }}/{{ userId}}/likes
           headers:
             Content-Type: application/json
           body: "true"
@@ -47,7 +47,7 @@ scenarios:
             pwd: "{{ pwd }}"
 
       - get:
-          url: /shorts/{{ createdShort.id }}/likes
+          url: /shorts/{{ createdShort.shortId }}/likes
           qs:
             pwd: "{{ pwd }}"
           capture:

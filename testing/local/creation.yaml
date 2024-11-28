@@ -1,5 +1,5 @@
 config:
-  target: http://localhost:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint:
   processor: ../test-utils.js
@@ -67,7 +67,7 @@ scenarios:
             pwd: "{{ randomPwd }}"
 
       - post: # liking own short
-          url: /shorts/{{ createdShort.id }}/{{ userId}}/likes
+          url: /shorts/{{ createdShort.shortId }}/{{ userId}}/likes
           headers:
             Content-Type: application/json
           body: "true"

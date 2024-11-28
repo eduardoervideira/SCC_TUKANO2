@@ -1,5 +1,5 @@
 config:
-  target: http://localhost:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint: {} # Used to get metrics for each endpoint individually.
   processor: ../test-utils.js
@@ -31,7 +31,7 @@ scenarios:
       - log: "createShort: {{ createdShort }}"
 
       - get:
-          url: /shorts/{{ createdShort.id }}
+          url: /shorts/{{ createdShort.shortId }}
           afterResponse: "getBlobIdFromShort"
           capture:
             - json: "$"

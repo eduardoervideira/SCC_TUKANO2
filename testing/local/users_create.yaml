@@ -1,12 +1,12 @@
 config:
-  target: http://localhost:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint: {} # Used to get metrics for each endpoint individually.
   phases:
     - name: post
       duration: 1
       # arrivalRate: 2
-      arrivalCount: 1
+      arrivalCount: 6
   payload:
     path: ../data/users.csv
     order: sequence # selects users sequentially, default is random
@@ -16,23 +16,23 @@ config:
     skipEmptyLines: true # not important in our case
     fields:
       - "userId"
-      - "pwd"
       - "email"
+      - "pwd"
       - "displayName"
 
 scenarios:
-- name: "Create users from .csv"
-  flow:
-    - post:
-        url: /users/
-        headers:
+  - name: "Create users from .csv"
+    flow:
+      - post:
+          url: /users/
+          headers:
             Content-Type: application/json
-        json:
+          json:
             userId: "{{ userId }}" # this parameter is filled from the fields above
             pwd: "{{ pwd }}"
             email: "{{ email }}"
             displayName: "{{ displayName }}"
-        capture:
-          - regexp: "(.+)"
-            as: "userId"
-    - log: "createUser: {{ userId }}"
+          capture:
+            - regexp: "(.+)"
+              as: "userId"
+      - log: "createUser: {{ userId }}"
