@@ -1,13 +1,12 @@
 package tukano.impl.rest;
 
+import jakarta.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import jakarta.ws.rs.core.Application;
 import utils.IP;
 
-import utils.Props;
+import utils.auth.*;
 
 public class TukanoRestServer extends Application {
 
@@ -35,22 +34,10 @@ public class TukanoRestServer extends Application {
         resources.add(RestUsersResource.class);
         resources.add(RestShortsResource.class);
 
-        Props.load("azurekeys-northeurope.props");
+        resources.add(RequestCookiesFilter.class);
+        resources.add(ResponseCookiesFilter.class);
+        resources.add(RequestCookiesCleanupFilter.class);
     }
-
-    // protected void start() throws Exception {
-    //
-    //     ResourceConfig config = new ResourceConfig();
-    //
-    //     config.register(RestBlobsResource.class);
-    //     config.register(RestUsersResource.class);
-    //     config.register(RestShortsResource.class);
-    //
-    //     JdkHttpServerFactory.createHttpServer(
-    //         URI.create(serverURI.replace(IP.hostname(), INETADDR_ANY)), config);
-    //
-    //     Log.info(String.format("Tukano Server ready @ %s\n", serverURI));
-    // }
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -63,13 +50,6 @@ public class TukanoRestServer extends Application {
     }
 
     public static void main(String[] args) throws Exception {
-        // Args.use(args);
-        //
-        // Token.setSecret( Args.valueOf("-secret", ""));
-        // // Props.load( Args.valueOf("-props", "").split(","));
-        //
-        // new TukanoRestServer().start();
-
         return;
     }
 }
