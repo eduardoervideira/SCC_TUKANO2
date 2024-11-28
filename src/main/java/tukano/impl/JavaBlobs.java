@@ -59,6 +59,7 @@ public class JavaBlobs implements Blobs {
         if (!validCookie())
             return error(UNAUTHORIZED);
 
+        JavaFunctions.getInstance().stats(blobId);
         return storage.read(toPath(blobId));
     }
 
