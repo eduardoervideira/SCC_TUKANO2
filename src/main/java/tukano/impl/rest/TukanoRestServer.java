@@ -4,6 +4,8 @@ import jakarta.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import tukano.impl.rest.utils.RestFunctionsResource;
 import utils.IP;
 
 import utils.auth.*;
@@ -33,6 +35,7 @@ public class TukanoRestServer extends Application {
         resources.add(RestBlobsResource.class); // could be a singleton? Kevin said so
         resources.add(RestUsersResource.class);
         resources.add(RestShortsResource.class);
+        resources.add(RestFunctionsResource.class);
 
         resources.add(RequestCookiesFilter.class);
         resources.add(ResponseCookiesFilter.class);
