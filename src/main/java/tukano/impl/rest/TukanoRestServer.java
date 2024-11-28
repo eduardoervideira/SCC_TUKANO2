@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import tukano.impl.rest.utils.RestFunctionsResource;
 import utils.IP;
 
 import utils.auth.*;
