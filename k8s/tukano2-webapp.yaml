@@ -35,17 +35,10 @@ spec:
               value: "joaoeddy"
             - name: POSTGRES_PASSWORD
               value: "joaoeddyCHANGELATER"
-            - name: BLOB_STORAGE_PATH
-              value: /app/blobs/
+            - name: BLOBS_SERVICE_URL
+              value: "tukano-blobs-service"
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - name: blob-storage
-              mountPath: /app/blobs/
-      volumes:
-        - name: blob-storage
-          persistentVolumeClaim:
-            claimName: blob-storage-pvc
 ---
 apiVersion: v1
 kind: Service
