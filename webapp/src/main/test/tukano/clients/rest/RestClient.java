@@ -112,6 +112,7 @@ public class RestClient {
 		return switch (status) {
 		case 200, 204 -> ErrorCode.OK;
 		case 409 -> ErrorCode.CONFLICT;
+		case 401 -> ErrorCode.UNAUTHORIZED;
 		case 403 -> ErrorCode.FORBIDDEN;
 		case 404 -> ErrorCode.NOT_FOUND;
 		case 400 -> ErrorCode.BAD_REQUEST;

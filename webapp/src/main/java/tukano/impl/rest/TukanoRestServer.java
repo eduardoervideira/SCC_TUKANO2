@@ -30,7 +30,7 @@ public class TukanoRestServer extends Application {
     public TukanoRestServer() {
         serverURI = String.format(SERVER_BASE_URI, IP.hostname(), PORT);
 
-        resources.add(RestBlobsResource.class); // could be a singleton? Kevin said so
+        // resources.add(RestBlobsResource.class); // could be a singleton? Kevin said so
         resources.add(RestUsersResource.class);
         resources.add(RestShortsResource.class);
 

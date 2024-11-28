@@ -96,8 +96,9 @@ public class JavaUsers implements Users {
                     .newThread(() -> {
                         JavaShorts.getInstance().deleteAllShorts(
                             userId, pwd, Token.get(userId));
-                        JavaBlobs.getInstance().deleteAllBlobs(
-                            userId, Token.get(userId));
+                        // TODO admins can delete their own stuff
+                        // JavaBlobs.getInstance().deleteAllBlobs(
+                        //     userId, Token.get(userId));
                     })
                     .start();
 

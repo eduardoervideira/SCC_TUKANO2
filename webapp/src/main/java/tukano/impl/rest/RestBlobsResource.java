@@ -1,9 +1,9 @@
-package tukano.impl.rest;
+package tukanoBlobs.impl.rest;
 
 import jakarta.inject.Singleton;
-import tukano.api.Blobs;
-import tukano.api.rest.RestBlobs;
-import tukano.impl.JavaBlobs;
+import tukanoBlobs.api.Blobs;
+import tukanoBlobs.api.rest.RestBlobs;
+import tukanoBlobs.impl.JavaBlobs;
 
 @Singleton
 public class RestBlobsResource extends RestResource implements RestBlobs {
