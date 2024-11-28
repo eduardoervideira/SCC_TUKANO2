@@ -25,20 +25,22 @@ public class Short {
 	String blobUrl;
 	long timestamp;
 	int totalLikes;
+    int totalViews;
 
 	public Short() {}
 	
-	public Short(String shortId, String ownerId, String blobUrl, long timestamp, int totalLikes) {
+	public Short(String shortId, String ownerId, String blobUrl, long timestamp, int totalLikes, int totalViews) {
 		super();
 		this.shortId = shortId;
 		this.ownerId = ownerId;
 		this.blobUrl = blobUrl;
 		this.timestamp = timestamp;
 		this.totalLikes = totalLikes;
+        this.totalViews = totalViews;
 	}
 
 	public Short(String shortId, String ownerId, String blobUrl) {
-		this( shortId, ownerId, blobUrl, System.currentTimeMillis(), 0);
+		this( shortId, ownerId, blobUrl, System.currentTimeMillis(), 0, 0);
 	}
 	
 	public String getShortId() {
@@ -81,14 +83,18 @@ public class Short {
 		this.totalLikes = totalLikes;
 	}
 
+    public int getTotalViews() { return totalViews; }
+
+    public void setTotalViews(int totalViews) { this.totalViews = totalViews; }
+
 	@Override
 	public String toString() {
 		return "Short [shortId=" + shortId + ", ownerId=" + ownerId + ", blobUrl=" + blobUrl + ", timestamp="
-				+ timestamp + ", totalLikes=" + totalLikes + "]";
+				+ timestamp + ", totalLikes=" + totalLikes + ", totalViews=" + totalViews + "]";
 	}
 	
-	public Short copyWithLikes_And_Token( long totLikes) {
+	public Short copyWithLikes_Views_And_Token( long totLikes, long totViews) {
 		var urlWithToken = String.format("%s?token=%s", blobUrl, Token.get(blobUrl));
-		return new Short( shortId, ownerId, urlWithToken, timestamp, (int)totLikes);
+		return new Short( shortId, ownerId, urlWithToken, timestamp, (int)totLikes, (int)totViews);
 	}	
 }
