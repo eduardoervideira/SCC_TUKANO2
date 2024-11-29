@@ -16,7 +16,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
         - name: tukano-webapp
-          image: jbrilha/scc2425-tukano2:latest
+          image: eduardoervideira/scc2425-tukano2:latest
           imagePullPolicy: Never
           env:
             - name: REDIS_KEY
