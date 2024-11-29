@@ -1,0 +1,76 @@
+config:
+  target: http://tukano.local/tukano/rest
+  plugins:
+    metrics-by-endpoint:
+  processor: ../test-utils.js
+  phases:
+    # - name: "Warm up"
+    #   duration: 15
+    #   arrivalRate: 1
+    #   rampTo: 5
+    - name: "Main test"
+      duration: 3
+      arrivalRate: 2
+  payload:
+    path: ../data/users.csv
+    order: sequence # selects users sequentially, default is random
+    # loadAll: true # load the whole CSV
+    skipHeader: true # The first line is a header, so we want to skip it
+    delimiter: "," # standard delimiter
+    skipEmptyLines: true # not important in our case
+    fields:
+      - "_userId"
+      - "pwd"
+
+scenarios:
+  - name: "Testing for creation-type use of the app"
+    flow:
+      - post:
+          url: /users
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+          beforeRequest: "uploadRandomizedUser"
+          capture:
+            - regexp: "(.+)"
+              as: "userId"
+      - log: "createUser: {{ userId }}"
+
+      - loop:
+        - post:
+            url: /shorts/{{ userId }}
+            afterResponse:
+              - "storeShort"
+              - "getBlobIdFromShort"
+            qs:
+              pwd: "{{ randomPwd }}"
+            capture:
+              - json: "$"
+                as: "createdShort"
+        - log: "createShort: {{ createdShort }}"
+
+        - post:
+            url: /blobs/{{ blobId }}
+            beforeRequest: "randomBytes"
+            headers:
+              Content-Type: application/octet-stream
+            qs:
+              token: "{{ token }}"
+        count: 5
+
+      - post:
+          url: /shorts/{{ userId }}/{{ _userId }}/followers
+          headers:
+            Content-Type: application/json
+          body: "true"
+          qs:
+            pwd: "{{ randomPwd }}"
+
+      - post: # liking own short
+          url: /shorts/{{ createdShort.shortId }}/{{ userId}}/likes
+          headers:
+            Content-Type: application/json
+          body: "true"
+          qs:
+            pwd: "{{ randomPwd }}"
+
