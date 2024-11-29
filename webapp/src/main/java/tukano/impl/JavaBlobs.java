@@ -1,16 +1,16 @@
-package tukanoBlobs.impl;
+package tukano.impl;
 
 import static java.lang.String.format;
-import static tukanoBlobs.api.Result.ErrorCode.FORBIDDEN;
-import static tukanoBlobs.api.Result.ErrorCode.UNAUTHORIZED;
-import static tukanoBlobs.api.Result.error;
+import static tukano.api.Result.ErrorCode.FORBIDDEN;
+import static tukano.api.Result.ErrorCode.UNAUTHORIZED;
+import static tukano.api.Result.error;
 
 import java.util.logging.Logger;
-import tukanoBlobs.api.Blobs;
-import tukanoBlobs.api.Result;
-import tukanoBlobs.impl.rest.BlobsRestServer;
-import tukanoBlobs.impl.storage.BlobStorage;
-import tukanoBlobs.impl.storage.FilesystemStorage;
+import tukano.api.Blobs;
+import tukano.api.Result;
+import tukano.impl.rest.TukanoRestServer;
+import tukano.impl.storage.BlobStorage;
+import tukano.impl.storage.FilesystemStorage;
 import utils.Hash;
 import utils.Hex;
 
@@ -31,7 +31,7 @@ public class JavaBlobs implements Blobs {
     private JavaBlobs() {
         storage = new FilesystemStorage();
         baseURI =
-            String.format("%s/%s/", BlobsRestServer.serverURI, Blobs.NAME);
+            String.format("%s/%s/", TukanoRestServer.serverURI, Blobs.NAME);
     }
 
     @Override
