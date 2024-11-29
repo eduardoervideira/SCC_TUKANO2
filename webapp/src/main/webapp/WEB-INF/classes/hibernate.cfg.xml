@@ -6,6 +6,7 @@
         <!-- http://jvmhub.com/2014/10/22/hibernate-and-postgresql-configuration-with-maven/ -->
         <!-- optimizes hibernate for Postgres-->
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="connection.pool_size">64</property>
         <!-- Echo the SQL to stdout -->
         <property name="show_sql">false</property>
         <!-- Set the current session context -->
@@ -13,10 +14,10 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">create-drop</property>
         <!-- dbcp connection pool configuration -->
-        <property name="hibernate.dbcp.initialSize">2</property>
+        <property name="hibernate.dbcp.initialSize">5</property>
         <property name="hibernate.dbcp.maxTotal">100</property>
         <property name="hibernate.dbcp.maxIdle">3</property>
-        <property name="hibernate.dbcp.minIdle">1</property>
+        <property name="hibernate.dbcp.minIdle">5</property>
         <property name="hibernate.dbcp.maxWaitMillis">10000</property>
 
         <property name="hibernate.dbcp.removeAbandonedTimeout">60</property>

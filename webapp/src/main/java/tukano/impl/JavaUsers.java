@@ -8,19 +8,13 @@ import static tukano.api.Result.errorOrResult;
 import static tukano.api.Result.errorOrValue;
 import static tukano.api.Result.ok;
 
-import jakarta.ws.rs.core.Cookie;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.NewCookie;
-import jakarta.ws.rs.core.Response;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import tukano.api.Result;
 import tukano.api.User;
 import tukano.api.Users;
 import utils.DB;
-import utils.auth.RequestCookies;
 
 public class JavaUsers implements Users {
 
