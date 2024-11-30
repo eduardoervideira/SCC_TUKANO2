@@ -13,6 +13,7 @@ import static utils.DB.getOne;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import tukano.api.Blobs;
 import tukano.api.Result;
@@ -22,6 +23,7 @@ import tukano.api.User;
 import tukano.impl.data.Following;
 import tukano.impl.data.Likes;
 import tukano.impl.rest.TukanoRestServer;
+import tukano.impl.cache.RedisCache;
 import utils.DB;
 
 public class JavaShorts implements Shorts {
@@ -168,16 +170,17 @@ public class JavaShorts implements Shorts {
 	public Result<Void> deleteAllShorts(String userId, String password, String token) {
 		Log.info(() -> format("deleteAllShorts : userId = %s, password = %s, token = %s\n", userId, password, token));
 
-        System.out.println("\n\n AAAAAAAAAAAAAAAA!!\n\n");
-
 		if( ! Token.isValid( token, userId ) )
 			return error(FORBIDDEN);
 		
-		return DB.transaction( hibernate -> {
+		var invalidIds =  DB.transaction( hibernate -> {
 						
 			//delete shorts
-			var query1 = format("DELETE FROM Short s WHERE s.ownerId = '%s'", userId);		
-			hibernate.createNativeQuery(query1, Short.class).executeUpdate();
+			var query1 = format("DELETE FROM Short s WHERE s.ownerId = '%s' RETURNING s.shortId", userId);		
+			var shortIds = hibernate.createNativeQuery(query1, String.class)
+                .getResultStream()
+                .map(id -> "short:" + id)
+                .collect(Collectors.toList());
 			
 			//delete follows
 			var query2 = format("DELETE FROM Following f WHERE f.follower = '%s' OR f.followee = '%s'", userId, userId);		
@@ -186,7 +189,19 @@ public class JavaShorts implements Shorts {
 			//delete likes
 			var query3 = format("DELETE FROM Likes l WHERE l.ownerId = '%s' OR l.userId = '%s'", userId, userId);		
 			hibernate.createNativeQuery(query3, Likes.class).executeUpdate();
-		});
+
+            return Result.ok(shortIds);
+		}).value();
+        // TODO I don't think assuming .value() will be a problem because the
+        // transaction always returns ok if successful (even if empty list)
+        // or throws some exception and doesn't commit so...? lmk
+
+        if (!invalidIds.isEmpty())
+            RedisCache.invalidate(invalidIds.toArray(String[]::new));
+    
+        System.out.println("invalidated: " + invalidIds);
+
+        return Result.ok();
 	}
 	
 }
