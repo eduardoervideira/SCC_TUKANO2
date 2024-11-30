@@ -7,12 +7,13 @@ import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider
-public class RequestCookiesCleanupFilter implements ContainerResponseFilter {
+public class CookiesCleanupFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext)
         throws IOException {
         RequestCookies.clear();
+        ResponseCookies.clear();
     }
 }
