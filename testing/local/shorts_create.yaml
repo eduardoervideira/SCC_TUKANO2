@@ -1,5 +1,5 @@
 config:
-  target: http://127.0.0.1:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint: {} # Used to get metrics for each endpoint individually.
   phases:
@@ -15,6 +15,7 @@ config:
     skipEmptyLines: true # not important in our case
     fields:
       - "userId"
+      - "email"
       - "pwd"
 
 scenarios:

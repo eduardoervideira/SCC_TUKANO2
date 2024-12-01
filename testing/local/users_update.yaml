@@ -1,5 +1,5 @@
 config:
-  target: http://localhost:8080/tukano-2/rest
+  target: http://tukano.local/tukano/rest
   plugins:
     metrics-by-endpoint: {} # Used to get metrics for each endpoint individually.
   phases:
@@ -30,7 +30,7 @@ scenarios:
         qs:
           pwd: "{{ pwd }}"
         json:
-            id: "{{ userId }}" # this parameter is filled from the fields above
+            userId: "{{ userId }}" # this parameter is filled from the fields above
             pwd: "{{ pwd }}"
             email: "updated.{{ email }}"
             displayName: "UPDATED {{ displayName }}"

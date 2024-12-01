@@ -52,7 +52,7 @@ function uploadRandomizedUser(requestParams, context, ee, next) {
     context.vars.randomPwd = pword;
 
     const user = {
-        id: username,
+        userId: username,
         pwd: pword,
         email: email,
         displayName: displayName,
@@ -123,7 +123,7 @@ function processDownload(requestParams, response, context, ee, next) {
     const blobId = context.vars.blobId;
 
     fs.writeFileSync("blobs/" + blobId, blobBytes);
-    console.log("Downloaded blob: " + blobId);
+    console.log("<<<Downloaded blob: " + blobId + " | " + blobBytes + ">>>");
 
     return next();
 }
@@ -171,7 +171,7 @@ function storeShort(requestParams, response, context, ee, next) {
         return next();
     }
     const short = JSON.parse(response.body);
-    const shortId = short.id;
+    const shortId = short.userId;
 
     fs.appendFileSync("data/shorts.csv", shortId + "\n");
 

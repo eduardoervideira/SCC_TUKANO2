@@ -1,12 +1,16 @@
 #!/bin/bash
 
 mvn clean compile package
-docker build -t eduardoervideira/scc2425-tukano2:latest .
+docker build -t jbrilha/scc2425-tukano2:latest webapp/.
+docker build -t jbrilha/scc2425-tukano2-blobs:latest blob-service/.
 
 kubectl delete all --all
 kubectl apply -f k8s/redis.yaml
 kubectl apply -f k8s/postgres.yaml
 kubectl apply -f k8s/persistent-volume.yaml
 kubectl apply -f k8s/tukano2-webapp.yaml
+kubectl apply -f k8s/tukano2-blobs.yaml
+kubectl apply -f k8s/ingress.yaml
 kubectl rollout restart deployment
-minikube ip
+
+minikube tunnel
