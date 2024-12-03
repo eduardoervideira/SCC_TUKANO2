@@ -65,7 +65,7 @@ public class JavaFunctions implements Functions {
                 (
                 SELECT l.shortId FROM Likes l
                     GROUP BY l.shortId
-                    ORDER BY COUNT(*) 
+                    ORDER BY COUNT(*) DESC
                     LIMIT 5
                 )
         """;
