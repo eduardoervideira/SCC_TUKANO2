@@ -8,9 +8,15 @@ import static tukano.api.Result.errorOrResult;
 import static tukano.api.Result.errorOrValue;
 import static tukano.api.Result.ok;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+
+import jakarta.ws.rs.core.Cookie;
 import tukano.api.Result;
 import tukano.api.User;
 import tukano.api.Users;
@@ -86,18 +92,41 @@ public class JavaUsers implements Users {
             validatedUserOrError(DB.getOne(userId, User.class), pwd), user -> {
                 // Delete user shorts and related info asynchronously in a
                 // separate thread
+                var cookie = Authentication.getRequestCookies();
                 Executors.defaultThreadFactory()
                     .newThread(() -> {
                         JavaShorts.getInstance().deleteAllShorts(
                             userId, pwd, Token.get(userId));
-                        // TODO admins can delete their own stuff
-                        // JavaBlobs.getInstance().deleteAllBlobs(
-                        //     userId, Token.get(userId));
+
+                        if (user.getUserId().equals("admin")) {
+                            deleteBlobs(userId, cookie);
+                        }
                     })
                     .start();
 
                 return DB.deleteOne(user);
             });
+    }
+
+    private void deleteBlobs(String userId, Cookie cookie) {
+        var service = System.getenv("BLOBS_SERVICE_URL");
+        // TODO clean this up somehow
+        var endpoint = "http://" + service +
+                       ":8080/blob-service-2/rest/blobs/" + userId + "/blobs";
+        var uri = URI.create(endpoint);
+
+        var cookieStr = cookie.getName() + "=" + cookie.getValue();
+        try {
+            HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                .uri(uri)
+                .header("Cookie", cookieStr)
+                .DELETE()
+                .build(),
+                HttpResponse.BodyHandlers.discarding());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

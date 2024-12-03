@@ -3,6 +3,7 @@ package tukano.impl;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
+
 import java.util.UUID;
 import tukano.api.Session;
 import tukano.impl.cache.RedisCache;
@@ -35,6 +36,10 @@ public class Authentication {
         throws NotAuthorizedException {
         var cookies = RequestCookies.get();
         return validateSession(cookies.get(COOKIE_KEY), userId);
+    }
+
+    static public Cookie getRequestCookies() {
+        return RequestCookies.get().get(COOKIE_KEY);
     }
 
     static public Session validateSession(Cookie cookie, String userId)
