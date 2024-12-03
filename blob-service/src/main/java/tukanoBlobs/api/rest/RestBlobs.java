@@ -34,9 +34,9 @@ public interface RestBlobs {
  	
 	@DELETE
 	@Path("/{" + BLOB_ID + "}")
-	void delete(@PathParam(BLOB_ID) String blobId, @QueryParam(TOKEN) String token );		
+	void delete(@PathParam(BLOB_ID) String blobId);		
 
 	@DELETE
 	@Path("/{" + USER_ID + "}/" + BLOBS)
-	void deleteAllBlobs(@PathParam(USER_ID) String userId, @QueryParam(TOKEN) String token );		
+	void deleteAllBlobs(@PathParam(USER_ID) String userId);		
 }

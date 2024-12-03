@@ -43,7 +43,8 @@ public class JavaBlobs implements Blobs {
 
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
-        if (!validCookieWithId(blobId))
+        String userId = blobId.split("\\+")[0];
+        if (!validCookieWithId(userId))
             return error(UNAUTHORIZED);
 
         return storage.write(toPath(blobId), bytes);
@@ -63,25 +64,32 @@ public class JavaBlobs implements Blobs {
     }
 
     @Override
-    public Result<Void> delete(String blobId, String token) {
+    public Result<Void> delete(String blobId) {
         Log.info(
-            () -> format("delete : blobId = %s, token=%s\n", blobId, token));
+            () -> format("delete : blobId = %s\n", blobId));
 
-        // TODO admin only validation
-        if (!validBlobId(blobId, token))
-            return error(FORBIDDEN);
+        // removed token validation because if user deletes short
+        // then admin could never acquire valid token
+        // if (!validBlobId(blobId, token))
+        //     return error(FORBIDDEN);
+        if (!validCookieWithId("admin"))
+            return error(UNAUTHORIZED);
 
         return storage.delete(toPath(blobId));
     }
 
     @Override
-    public Result<Void> deleteAllBlobs(String userId, String token) {
+    public Result<Void> deleteAllBlobs(String userId) {
         Log.info(()
-                     -> format("deleteAllBlobs : userId = %s, token=%s\n",
-                               userId, token));
+                     -> format("deleteAllBlobs : userId = %s\n",
+                               userId));
 
-        if (!Token.isValid(token, userId))
-            return error(FORBIDDEN);
+        // removed token validation because if user deletes account
+        // then admin could never acquire valid token
+        // if (!Token.isValid(token, userId))
+        //     return error(FORBIDDEN);
+        if (!validCookieWithId("admin"))
+            return error(UNAUTHORIZED);
 
         return storage.delete(toPath(userId));
     }
@@ -90,9 +98,7 @@ public class JavaBlobs implements Blobs {
         return Token.isValid(token, blobId);
     }
 
-    private boolean validCookieWithId(String blobId) {
-        String userId = blobId.split("\\+")[0];
-
+    private boolean validCookieWithId(String userId) {
         try {
             Authentication.validateSession(userId);
         } catch (Exception e) {
