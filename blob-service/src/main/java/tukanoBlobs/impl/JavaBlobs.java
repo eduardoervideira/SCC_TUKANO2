@@ -5,6 +5,12 @@ import static tukanoBlobs.api.Result.ErrorCode.FORBIDDEN;
 import static tukanoBlobs.api.Result.ErrorCode.UNAUTHORIZED;
 import static tukanoBlobs.api.Result.error;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import tukanoBlobs.api.Blobs;
 import tukanoBlobs.api.Result;
@@ -50,6 +56,26 @@ public class JavaBlobs implements Blobs {
         return storage.write(toPath(blobId), bytes);
     }
 
+    private void countView(String blobId) {
+        var service = System.getenv("WEBAPP_SERVICE_URL");
+        // TODO clean this up somehow
+        var endpoint = "http://" + service + ":8080/webapp-2/rest/functions/" +
+                       blobId + "/views";
+        var tokenParam = "token=" + Token.get(blobId);
+        var uri = URI.create(endpoint + "?" + tokenParam);
+
+        try {
+            HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                    .uri(uri)
+                    .PUT(HttpRequest.BodyPublishers.noBody())
+                    .build(),
+                HttpResponse.BodyHandlers.discarding());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public Result<byte[]> download(String blobId, String token) {
         Log.info(
@@ -59,6 +85,10 @@ public class JavaBlobs implements Blobs {
             return error(FORBIDDEN);
         if (!validCookie())
             return error(UNAUTHORIZED);
+
+        Executors.defaultThreadFactory()
+            .newThread(() -> { countView(blobId); })
+            .start();
 
         return storage.read(toPath(blobId));
     }
