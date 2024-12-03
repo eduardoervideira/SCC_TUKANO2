@@ -19,11 +19,20 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: "tukano"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
-              value: "joaoeddy"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: "joaoeddyCHANGELATER"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_PASSWORD
 ---
 apiVersion: v1
 kind: Service

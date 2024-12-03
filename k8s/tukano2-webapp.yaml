@@ -20,21 +20,36 @@ spec:
           imagePullPolicy: Never
           env:
             - name: REDIS_KEY
-              value: "joaoeddyREDIS"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: REDIS_KEY
             - name: REDIS_URL
               value: "redis-service"
             - name: SECRET
-              value: "supersecret"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: SECRET
             - name: POSTGRES_HOST
               value: "postgres-service"
             - name: POSTGRES_PORT
               value: "5432"
             - name: POSTGRES_DB
-              value: "tukano"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
-              value: "joaoeddy"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: "joaoeddyCHANGELATER"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_PASSWORD
             - name: BLOBS_SERVICE_URL
               value: "tukano-blobs-service"
           ports:

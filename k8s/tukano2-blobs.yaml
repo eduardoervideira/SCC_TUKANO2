@@ -16,15 +16,21 @@ spec:
         "kubernetes.io/os": linux
       containers:
         - name: tukano-blobs
-          image: jbrilha/scc2425-tukano2-blobs:latest
+          image: eduardoervideira/scc2425-tukano2-blobs:latest
           imagePullPolicy: Never
           env:
             - name: BLOB_STORAGE_PATH
               value: /app/blobs/
             - name: SECRET
-              value: "supersecret"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: SECRET
             - name: REDIS_KEY
-              value: "joaoeddyREDIS"
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: REDIS_KEY
             - name: REDIS_URL
               value: "redis-service"
             - name: WEBAPP_SERVICE_URL
