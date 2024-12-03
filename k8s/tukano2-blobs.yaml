@@ -16,7 +16,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
         - name: tukano-blobs
-          image: eduardoervideira/scc2425-tukano2-blobs:latest
+          image: jbrilha/scc2425-tukano2-blobs:latest
           imagePullPolicy: Never
           env:
             - name: BLOB_STORAGE_PATH

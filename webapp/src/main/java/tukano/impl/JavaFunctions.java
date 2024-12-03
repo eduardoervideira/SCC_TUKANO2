@@ -4,12 +4,14 @@ import static tukano.api.Result.*;
 import static tukano.api.Result.ErrorCode.FORBIDDEN;
 
 import java.util.logging.Logger;
+
 import tukano.api.Functions;
 import tukano.api.Result;
 import tukano.api.Short;
 import utils.DB;
 
 public class JavaFunctions implements Functions {
+    public static final String TUK_RECS = "tukRecs";
 
     private static Functions instance;
     private static Logger Log = Logger.getLogger(JavaFunctions.class.getName());
@@ -34,8 +36,6 @@ public class JavaFunctions implements Functions {
         return errorOrResult(
             JavaShorts.getInstance().getShort(shortId), shrt -> {
                 return DB.transaction(hibernate -> {
-                    // var query = "UPDATE Short SET totalViews = totalViews + 1 "
-                    //             + "WHERE shortId = :shortId";
                     var query = """
                             INSERT INTO Stats (shortId, views) 
                             VALUES (:shortId, 1)
@@ -56,25 +56,39 @@ public class JavaFunctions implements Functions {
         System.out.println("\n\nTUKANO RECOMMENDS");
         
         var query = """
-                (
-                    SELECT shortId FROM Stats
-                    ORDER BY views DESC
-                    LIMIT 5
-                )
-                    UNION
-                (
-                SELECT l.shortId FROM Likes l
-                    GROUP BY l.shortId
-                    ORDER BY COUNT(*) DESC
-                    LIMIT 5
+                SELECT s.* FROM Short s
+                WHERE s.shortId IN (
+                    (
+                        SELECT shortId FROM Stats
+                        ORDER BY views DESC
+                        LIMIT 5
+                    )
+                        UNION
+                    (
+                        SELECT l.shortId FROM Likes l
+                        GROUP BY l.shortId
+                        ORDER BY COUNT(*) DESC
+                        LIMIT 5
+                    )
                 )
         """;
-        var statsRes = DB.sql(query, String.class);
-        if(statsRes.isEmpty()) {
-            System.out.println("shit");
-        } else {
-            System.out.println("yooooo: " + statsRes);
+        var shorts = DB.sql(query, Short.class);
+        if(shorts.isEmpty()) {
+            return Result.error(ErrorCode.NOT_FOUND);
         }
+
+        DB.transaction(hibernate -> {
+            var deleteQuery = String.format("DELETE FROM Short s WHERE s.ownerId = '%s'", TUK_RECS);
+            hibernate.createNativeMutationQuery(deleteQuery)
+                    .executeUpdate();
+
+            for (Short s : shorts) {
+                s.setOwnerId(JavaFunctions.TUK_RECS);
+                s.setShortId(JavaFunctions.TUK_RECS + "_" + s.getShortId());
+
+                hibernate.persist(s);
+            }
+        });
 
         return Result.ok();
     }
