@@ -16,8 +16,8 @@ spec:
         "kubernetes.io/os": linux
       containers:
         - name: tukano-webapp
-          image: eduardoervideira/scc2425-tukano2:latest
-          imagePullPolicy: Never
+          image: eervideirafct/scc2425-tukano2:latest
+          imagePullPolicy: Always
           env:
             - name: REDIS_KEY
               valueFrom:
@@ -60,7 +60,7 @@ kind: Service
 metadata:
   name: tukano-webapp-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: tukano-webapp
   ports:
