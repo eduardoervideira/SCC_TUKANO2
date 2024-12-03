@@ -34,7 +34,7 @@ public class BlobsRestServer extends Application {
 
         resources.add(RequestCookiesFilter.class);
         resources.add(ResponseCookiesFilter.class);
-        resources.add(RequestCookiesCleanupFilter.class);
+        resources.add(CookiesCleanupFilter.class);
     }
 
     @Override

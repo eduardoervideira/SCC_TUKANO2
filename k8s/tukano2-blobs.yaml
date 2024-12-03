@@ -27,6 +27,8 @@ spec:
               value: "joaoeddyREDIS"
             - name: REDIS_URL
               value: "redis-service"
+            - name: WEBAPP_SERVICE_URL
+              value: "tukano-webapp-service"
           ports:
             - containerPort: 8080
           volumeMounts:

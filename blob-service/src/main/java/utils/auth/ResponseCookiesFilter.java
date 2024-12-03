@@ -12,8 +12,5 @@ public class ResponseCookiesFilter implements ContainerResponseFilter {
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext) {
         responseContext.getHeaders().add("Set-Cookie", ResponseCookies.get());
-        // TODO not sure if I should clear every time but it makes sense
-        // to not leave any cookies laying around? lmk
-        ResponseCookies.clear();
     }
 }
