@@ -235,7 +235,7 @@ public class JavaShorts implements Shorts {
         if (!Token.isValid(token, userId))
             return error(FORBIDDEN);
 
-        var invalidIds =
+        var invalidIdRes =
             DB.transaction(hibernate -> {
                   // delete shorts
                   var query1 = format("DELETE FROM Short s WHERE s.ownerId = " +
@@ -262,15 +262,16 @@ public class JavaShorts implements Shorts {
                       .executeUpdate();
 
                   return Result.ok(shortIds);
-              }).value();
-        // TODO I don't think assuming .value() will be a problem because the
-        // transaction always returns ok if successful (even if empty list)
-        // or throws some exception and doesn't commit so...? lmk
+              });
 
-        if (!invalidIds.isEmpty())
-            RedisCache.invalidate(invalidIds.toArray(String[]::new));
+        if (invalidIdRes.isOK()) {
+            var invalidIds = invalidIdRes.value();
+            if (!invalidIds.isEmpty()) {
+                RedisCache.invalidate(invalidIds.toArray(String[]::new));
+                System.out.println("invalidated: " + invalidIds);
+            }
+        }
 
-        System.out.println("invalidated: " + invalidIds);
 
         return Result.ok();
     }
