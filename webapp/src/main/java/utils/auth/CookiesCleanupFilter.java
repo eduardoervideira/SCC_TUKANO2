@@ -14,6 +14,6 @@ public class CookiesCleanupFilter implements ContainerResponseFilter {
                        ContainerResponseContext responseContext)
         throws IOException {
         RequestCookies.clear();
-        ResponseCookies.clear();
+        // ResponseCookies.clear();
     }
 }
