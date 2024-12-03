@@ -51,6 +51,34 @@ public class JavaFunctions implements Functions {
             });
     }
 
+    @Override
+    public Result<Void> tukanoRecommends() {
+        System.out.println("\n\nTUKANO RECOMMENDS");
+        
+        var query = """
+                (
+                    SELECT shortId FROM Stats
+                    ORDER BY views DESC
+                    LIMIT 5
+                )
+                    UNION
+                (
+                SELECT l.shortId FROM Likes l
+                    GROUP BY l.shortId
+                    ORDER BY COUNT(*) 
+                    LIMIT 5
+                )
+        """;
+        var statsRes = DB.sql(query, String.class);
+        if(statsRes.isEmpty()) {
+            System.out.println("shit");
+        } else {
+            System.out.println("yooooo: " + statsRes);
+        }
+
+        return Result.ok();
+    }
+
     private boolean validShortId(String shortId, String token) {
         return Token.isValid(token, shortId);
     }
