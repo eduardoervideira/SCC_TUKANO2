@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tukano-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tukano-webapp
+  template:
+    metadata:
+      labels:
+        app: tukano-webapp
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+        - name: tukano-webapp
+          image: eervideirafct/scc2425-tukano2:latest
+          imagePullPolicy: Always
+          env:
+            - name: REDIS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: REDIS_KEY
+            - name: REDIS_URL
+              value: "redis-service"
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: SECRET
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tukano-secrets
+                  key: POSTGRES_PASSWORD
+            - name: BLOBS_SERVICE_URL
+              value: "tukano-blobs-service"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tukano-webapp-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: tukano-webapp
+  ports:
+    - port: 8080
+      targetPort: 8080
