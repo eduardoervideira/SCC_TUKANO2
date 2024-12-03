@@ -5,6 +5,12 @@ import static tukanoBlobs.api.Result.ErrorCode.FORBIDDEN;
 import static tukanoBlobs.api.Result.ErrorCode.UNAUTHORIZED;
 import static tukanoBlobs.api.Result.error;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import tukanoBlobs.api.Blobs;
 import tukanoBlobs.api.Result;
@@ -43,10 +49,31 @@ public class JavaBlobs implements Blobs {
 
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
-        if (!validCookieWithId(blobId))
+        String userId = blobId.split("\\+")[0];
+        if (!validCookieWithId(userId))
             return error(UNAUTHORIZED);
 
         return storage.write(toPath(blobId), bytes);
+    }
+
+    private void countView(String blobId) {
+        var service = System.getenv("WEBAPP_SERVICE_URL");
+        // TODO clean this up somehow
+        var endpoint = "http://" + service + ":8080/webapp-2/rest/functions/" +
+                       blobId + "/views";
+        var tokenParam = "token=" + Token.get(blobId);
+        var uri = URI.create(endpoint + "?" + tokenParam);
+
+        try {
+            HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                    .uri(uri)
+                    .PUT(HttpRequest.BodyPublishers.noBody())
+                    .build(),
+                HttpResponse.BodyHandlers.discarding());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -59,29 +86,40 @@ public class JavaBlobs implements Blobs {
         if (!validCookie())
             return error(UNAUTHORIZED);
 
+        Executors.defaultThreadFactory()
+            .newThread(() -> { countView(blobId); })
+            .start();
+
         return storage.read(toPath(blobId));
     }
 
     @Override
-    public Result<Void> delete(String blobId, String token) {
+    public Result<Void> delete(String blobId) {
         Log.info(
-            () -> format("delete : blobId = %s, token=%s\n", blobId, token));
+            () -> format("delete : blobId = %s\n", blobId));
 
-        // TODO admin only validation
-        if (!validBlobId(blobId, token))
-            return error(FORBIDDEN);
+        // removed token validation because if user deletes short
+        // then admin could never acquire valid token
+        // if (!validBlobId(blobId, token))
+        //     return error(FORBIDDEN);
+        if (!validCookieWithId("admin"))
+            return error(UNAUTHORIZED);
 
         return storage.delete(toPath(blobId));
     }
 
     @Override
-    public Result<Void> deleteAllBlobs(String userId, String token) {
+    public Result<Void> deleteAllBlobs(String userId) {
         Log.info(()
-                     -> format("deleteAllBlobs : userId = %s, token=%s\n",
-                               userId, token));
+                     -> format("deleteAllBlobs : userId = %s\n",
+                               userId));
 
-        if (!Token.isValid(token, userId))
-            return error(FORBIDDEN);
+        // removed token validation because if user deletes account
+        // then admin could never acquire valid token
+        // if (!Token.isValid(token, userId))
+        //     return error(FORBIDDEN);
+        if (!validCookieWithId("admin"))
+            return error(UNAUTHORIZED);
 
         return storage.delete(toPath(userId));
     }
@@ -90,9 +128,7 @@ public class JavaBlobs implements Blobs {
         return Token.isValid(token, blobId);
     }
 
-    private boolean validCookieWithId(String blobId) {
-        String userId = blobId.split("\\+")[0];
-
+    private boolean validCookieWithId(String userId) {
         try {
             Authentication.validateSession(userId);
         } catch (Exception e) {

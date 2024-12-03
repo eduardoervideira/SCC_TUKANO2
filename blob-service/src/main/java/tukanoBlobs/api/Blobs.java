@@ -38,7 +38,7 @@ public interface Blobs {
 	 * @return (OK, void), if the blob exists and was deleted;
 	 * 			 NOT_FOUND, if no blob matches the provided blobId
 	 */
-	Result<Void> delete( String blobId, String token );
+	Result<Void> delete( String blobId);
 	
 
 	/**
@@ -46,5 +46,5 @@ public interface Blobs {
 	 * 
 	 * @param userid the id of the owner of the blobs;
 	 */
-	Result<Void> deleteAllBlobs( String userId, String token );
+	Result<Void> deleteAllBlobs( String userId);
 }
