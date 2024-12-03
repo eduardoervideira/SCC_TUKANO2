@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: hello
+  name: tukano-recommends
 spec:
   schedule: "* * * * *"
   jobTemplate:
@@ -9,11 +9,10 @@ spec:
       template:
         spec:
           containers:
-          - name: hello
-            image: busybox:1.28
-            imagePullPolicy: IfNotPresent
+          - name: curl-container
+            image: curlimages/curl:latest
             command:
             - /bin/sh
             - -c
-            - date; echo Hello from the Kubernetes cluster
+            - curl http://tukano-webapp-service:8080/webapp-2/rest/functions/recs
           restartPolicy: OnFailure
