@@ -26,6 +26,7 @@ import tukano.api.User;
 import tukano.impl.cache.RedisCache;
 import tukano.impl.data.Following;
 import tukano.impl.data.Likes;
+import tukano.impl.data.Stats;
 import tukano.impl.rest.TukanoRestServer;
 import utils.DB;
 
@@ -259,6 +260,11 @@ public class JavaShorts implements Shorts {
                                       "'%s' OR l.userId = '%s'",
                                       userId, userId);
                   hibernate.createNativeQuery(query3, Likes.class)
+                      .executeUpdate();
+
+                  // delete stats
+                    var query4 = format("DELETE FROM Stats st WHERE st.shortId LIKE '%%%s%%'", userId);
+                  hibernate.createNativeQuery(query4, Stats.class)
                       .executeUpdate();
 
                   return Result.ok(shortIds);

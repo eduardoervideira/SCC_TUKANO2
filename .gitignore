@@ -5,3 +5,4 @@ target/
 *.props
 .settings/
 .project
+secrets.yaml

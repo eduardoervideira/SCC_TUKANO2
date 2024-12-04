@@ -8,6 +8,7 @@ import static tukano.api.Result.errorOrResult;
 import static tukano.api.Result.errorOrValue;
 import static tukano.api.Result.ok;
 
+import jakarta.ws.rs.core.Cookie;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -15,11 +16,10 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-
-import jakarta.ws.rs.core.Cookie;
 import tukano.api.Result;
 import tukano.api.User;
 import tukano.api.Users;
+import tukano.impl.data.Following;
 import utils.DB;
 
 public class JavaUsers implements Users {
@@ -46,8 +46,16 @@ public class JavaUsers implements Users {
         return errorOrValue(DB.insertOne(user), u -> {
             String userId = u.getUserId();
             Authentication.login(userId);
+            Executors.defaultThreadFactory().newThread(() -> {
+                followRecommendations(userId);
+            }).start();
             return userId;
         });
+    }
+
+    private void followRecommendations(String userId) {
+            var f = new Following(userId, JavaFunctions.TUK_RECS);
+            DB.insertOne(f);
     }
 
     @Override
@@ -119,10 +127,10 @@ public class JavaUsers implements Users {
         try {
             HttpClient.newHttpClient().send(
                 HttpRequest.newBuilder()
-                .uri(uri)
-                .header("Cookie", cookieStr)
-                .DELETE()
-                .build(),
+                    .uri(uri)
+                    .header("Cookie", cookieStr)
+                    .DELETE()
+                    .build(),
                 HttpResponse.BodyHandlers.discarding());
         } catch (Exception e) {
             e.printStackTrace();

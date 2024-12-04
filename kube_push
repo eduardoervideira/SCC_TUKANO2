@@ -1,0 +1,17 @@
+#!/bin/bash
+
+mvn clean compile package
+docker buildx build --platform linux/amd64 -t jbrilha/scc2425-tukano2:latest --push webapp/.
+docker buildx build --platform linux/amd64 -t jbrilha/scc2425-tukano2-blobs:latest --push blob-service/.
+
+kubectl delete all --all
+
+kubectl apply -f k8s/secrets.yaml
+kubectl apply -f k8s/persistent-volume.yaml
+kubectl apply -f k8s/redis.yaml
+kubectl apply -f k8s/postgres.yaml
+kubectl apply -f k8s/tukano2-webapp.yaml
+kubectl apply -f k8s/tukano2-blobs.yaml
+kubectl apply -f k8s/tukRecs.yaml
+kubectl apply -f k8s/ingress.yaml
+kubectl rollout restart deployment
