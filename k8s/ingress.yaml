@@ -3,13 +3,12 @@ kind: Ingress
 metadata:
   name: tukano-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /blob-service-2/rest/blobs$1
 spec:
   rules:
-  - host: tukano.local
+  - host: # your-aks-domain.region.cloudapp.azure.com
     http:
       paths:
       - path: /tukano/rest/blobs(/?.*)
@@ -25,13 +24,12 @@ kind: Ingress
 metadata:
   name: tukano-ingress-webapp
   annotations:
-    nginx.ingress.kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /webapp-2/rest/$1
 spec:
   rules:
-  - host: tukano.local
+  - host: # your-aks-domain.region.cloudapp.azure.com
     http:
       paths:
       - path: /tukano/rest/(?!blobs)(.*)
@@ -41,30 +39,3 @@ spec:
             name: tukano-webapp-service
             port:
               number: 8080
-
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: tukano-ingress
-#   annotations:
-#     nginx.ingress.kubernetes.io/ingress.class: nginx
-#     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-# spec:
-#   rules:
-#   - host: tukano.local
-#     http:
-#       paths:
-#       - path: /blob-service-2
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: tukano-blobs-service
-#             port:
-#               number: 8080
-#       - path: /webapp-2
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: tukano-webapp-service
-#             port:
-#               number: 8080

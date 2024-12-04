@@ -16,8 +16,8 @@ spec:
         "kubernetes.io/os": linux
       containers:
         - name: tukano-blobs
-          image: eduardoervideira/scc2425-tukano2-blobs:latest
-          imagePullPolicy: Never
+          image: jbrilha/scc2425-tukano2-blobs:latest
+          imagePullPolicy: Always
           env:
             - name: BLOB_STORAGE_PATH
               value: /app/blobs/
@@ -50,7 +50,8 @@ kind: Service
 metadata:
   name: tukano-blobs-service
 spec:
-  type: NodePort
+  # type: NodePort
+  type: ClusterIP
   selector:
     app: tukano-blobs
   ports:

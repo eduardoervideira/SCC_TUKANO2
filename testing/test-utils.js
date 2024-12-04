@@ -25,7 +25,8 @@ function randomUsername(char_limit) {
         username += letters[Math.floor(Math.random() * letters.length)];
     }
 
-    return username;
+    // return username;
+    return crypto.randomUUID();
 }
 
 function randomPassword(pass_len) {
@@ -140,10 +141,12 @@ function processFeed(requestParams, response, context, ee, next) {
 
     if (!Array.isArray(feed)) {
             console.error("feed not an array");
+            context.vars.feedShort = "1";
             return next();
         }
     if (feed.length === 0) {
             console.error("feed is empty");
+            context.vars.feedShort = "1";
             return next();
         }
 
@@ -171,7 +174,7 @@ function storeShort(requestParams, response, context, ee, next) {
         return next();
     }
     const short = JSON.parse(response.body);
-    const shortId = short.userId;
+    const shortId = short.shortId;
 
     fs.appendFileSync("data/shorts.csv", shortId + "\n");
 
