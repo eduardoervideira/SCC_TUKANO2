@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /blob-service-2/rest/blobs$1
 spec:
   rules:
-  - host: # your-aks-domain.region.cloudapp.azure.com
+  - host:
     http:
       paths:
       - path: /tukano/rest/blobs(/?.*)
@@ -29,7 +29,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /webapp-2/rest/$1
 spec:
   rules:
-  - host: # your-aks-domain.region.cloudapp.azure.com
+  - host:
     http:
       paths:
       - path: /tukano/rest/(?!blobs)(.*)
