@@ -74,7 +74,6 @@ public class Short {
     }
 
     public Short copyWithLikes_Views_And_Token(long totLikes, long totViews) {
-        // TODO explain why we changed this to blobId from blobUrl
         var urlWithToken =
             String.format("%s?token=%s", blobUrl, Token.get(shortId));
         return new Short(shortId, ownerId, urlWithToken, timestamp,

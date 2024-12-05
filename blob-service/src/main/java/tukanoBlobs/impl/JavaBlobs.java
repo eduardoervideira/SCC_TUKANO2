@@ -58,7 +58,6 @@ public class JavaBlobs implements Blobs {
 
     private void countView(String blobId) {
         var service = System.getenv("WEBAPP_SERVICE_URL");
-        // TODO clean this up somehow
         var endpoint = "http://" + service + ":8080/webapp-2/rest/functions/" +
                        blobId + "/views";
         var tokenParam = "token=" + Token.get(blobId);

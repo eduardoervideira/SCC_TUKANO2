@@ -2,34 +2,12 @@ package tukanoBlobs.impl;
 
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.core.Cookie;
-import jakarta.ws.rs.core.NewCookie;
-import java.util.UUID;
 import tukanoBlobs.api.Session;
 import tukanoBlobs.impl.cache.RedisCache;
 import utils.auth.RequestCookies;
-import utils.auth.ResponseCookies;
 
 public class Authentication {
     static final String COOKIE_KEY = "scc:session";
-    private static final int MAX_COOKIE_AGE = 3600;
-
-    public static NewCookie login(String userId) {
-        String uid = UUID.randomUUID().toString();
-        var cookie = new NewCookie.Builder(COOKIE_KEY)
-                         .value(uid)
-                         .path("/")
-                         .comment("sessionid")
-                         .maxAge(MAX_COOKIE_AGE)
-                         // TODO secure true for azure deployment?
-                         .secure(false)
-                         .httpOnly(true)
-                         .build();
-
-        var key = "session:" + uid;
-        RedisCache.insertOne(key, new Session(uid, userId));
-        ResponseCookies.set(cookie);
-        return cookie;
-    }
 
     static public Session validateSession(String userId)
         throws NotAuthorizedException {

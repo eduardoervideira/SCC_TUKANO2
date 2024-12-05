@@ -106,7 +106,6 @@ public class JavaShorts implements Shorts {
 
     private void deleteBlob(String blobId) {
         var service = System.getenv("BLOBS_SERVICE_URL");
-        // TODO clean this up somehow
         var endpoint = "http://" + service + ":8080/blob-service-2/rest/blobs/" +
                        blobId;
         var uri = URI.create(endpoint);

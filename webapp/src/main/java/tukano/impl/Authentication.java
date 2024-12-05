@@ -21,7 +21,6 @@ public class Authentication {
                          .path("/")
                          .comment("sessionid")
                          .maxAge(MAX_COOKIE_AGE)
-                         // TODO secure true for azure deployment?
                          .secure(false)
                          .httpOnly(true)
                          .build();
